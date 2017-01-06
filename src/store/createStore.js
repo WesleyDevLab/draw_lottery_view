@@ -4,6 +4,8 @@ import { browserHistory } from 'react-router'
 import makeRootReducer from './reducers'
 import { updateLocation } from './location'
 
+import DevTools from '../components/DevTools'
+
 export default (initialState = {}) => {
   // ======================================================
   // Middleware Configuration
@@ -29,11 +31,12 @@ export default (initialState = {}) => {
     initialState,
     compose(
       applyMiddleware(...middleware),
-      ...enhancers
+      ...enhancers,
+      //必须的！启用带有monitors（监视显示）的DevTools
+      DevTools.instrument(),
     )
   )
   store.asyncReducers = {}
-
   // To unsubscribe, invoke `store.unsubscribeHistory()` anytime
   store.unsubscribeHistory = browserHistory.listen(updateLocation(store))
 

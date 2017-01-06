@@ -1,15 +1,18 @@
 import React from 'react'
+import { Button } from 'antd'
 
 export const Counter = (props) => (
-  <div style={{ margin: '0 auto' }}>
+  <div style={{
+    margin: '0 auto'
+  }}>
     <h2>Counter: {props.counter}</h2>
-    <button className='btn btn-default' onClick={props.increment}>
+    <Button type='primary' onClick={props.increment}>
       Increment
-    </button>
+    </Button>
     {' '}
-    <button className='btn btn-default' onClick={props.doubleAsync}>
+    <Button  type='primary' onClick={props.doubleAsync}>
       Double (Async)
-    </button>
+    </Button>
   </div>
 )
 
