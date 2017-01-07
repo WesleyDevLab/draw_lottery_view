@@ -16,13 +16,13 @@ if (config.env === 'development') {
 
   debug('Enable webpack dev and HMR middleware')
   app.use(require('webpack-dev-middleware')(compiler, {
-    publicPath  : webpackConfig.output.publicPath,
-    contentBase : paths.client(),
-    hot         : true,
-    quiet       : config.compiler_quiet,
-    noInfo      : config.compiler_quiet,
-    lazy        : false,
-    stats       : config.compiler_stats
+    publicPath: webpackConfig.output.publicPath,
+    contentBase: paths.client(),
+    hot: true,
+    quiet: config.compiler_quiet,
+    noInfo: config.compiler_quiet,
+    lazy: false,
+    stats: config.compiler_stats
   }))
   app.use(require('webpack-hot-middleware')(compiler))
 
@@ -32,7 +32,7 @@ if (config.env === 'development') {
   // when the application is compiled.
   app.use(express.static(paths.client('static')))
 
-  app.use('*', function (req, res, next) {
+  app.use('*', function(req, res, next) {
     const filename = path.join(compiler.outputPath, 'index.html')
     compiler.outputFileSystem.readFile(filename, (err, result) => {
       if (err) {

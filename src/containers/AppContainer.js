@@ -9,11 +9,9 @@ class AppContainer extends Component {
     routes: PropTypes.object.isRequired,
     store: PropTypes.object.isRequired
   }
-
   shouldComponentUpdate() {
     return false
   }
-
   render() {
     const {routes, store} = this.props
 

@@ -5,7 +5,6 @@ const webpackConfig = require('../build/webpack.config')
 const config = require('../config')
 
 const paths = config.utils_paths
-
 const compile = () => {
   debug('Starting compiler.')
   return Promise.resolve()
