@@ -5,14 +5,13 @@
  * @version 1.0.0
  */
 import React, { Component } from 'react';
-import { Menu, Icon } from 'antd';
+import { Menu, Icon, Affix } from 'antd';
 import { IndexLink, Link } from 'react-router'
 class Sider extends Component {
 
   render() {
     const {menuItems} = this.props.menu;
     return (
-
       <aside className="layout-sider">
         <div className="layout-logo"></div>
         <Menu mode="inline" theme="dark"
@@ -21,7 +20,7 @@ class Sider extends Component {
             <IndexLink to='/'><Icon type="appstore-o" />{menuItems[0]}</IndexLink>
           </Menu.Item>
             <Menu.Item key="2">
-            <Link to='/counter'><Icon type="shopping-cart" /> {menuItems[1]}</Link></Menu.Item>
+            <Link to='/commodityManagement'><Icon type="shopping-cart" /> {menuItems[1]}</Link></Menu.Item>
             <Menu.Item key="3"><Icon type="calculator" />{menuItems[2]}</Menu.Item>
             <Menu.Item key="4"><Icon type="team" />{menuItems[3]}</Menu.Item>
           <Menu.Item key="5"><Icon type="share-alt" />{menuItems[4]}</Menu.Item>

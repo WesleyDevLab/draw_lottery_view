@@ -44,7 +44,8 @@ const f = (url, func, options) => {
   });
   let request = new Request(urlFront + url, {
     method: 'POST',
-    headers: headers
+    headers: headers,
+    body: JSON.stringify(opts.data)
   })
 
   fetch(request)

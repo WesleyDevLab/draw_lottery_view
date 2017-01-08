@@ -16,9 +16,8 @@ const mapDispatcherToProps = {
 }
 //将全局的state映射到组件的props，相当于从store获取数据
 const mapStateToProps = (state) => {
-  console.log('map state to prop + state ===', state);
   return {
-    home: state.home
+    home: state.coreLayout
   }
 }
 const Core = connect(mapStateToProps, mapDispatcherToProps)(CoreLayout);

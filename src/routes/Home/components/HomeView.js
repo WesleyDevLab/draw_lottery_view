@@ -1,14 +1,22 @@
-import React from 'react'
-import './HomeView.scss'
-import {
-  Button
-} from 'antd'
+/**
+ * 首页
+ * draw_lottery HomeView.js build on Windows 
+ * @authors wuhongxu (wuhongxu1208@gmail.com)
+ * @date    2017-01-08 23:02:39
+ * @version $Id$
+ * @link <link>https://userwu.github.io/</link>
+ * 
+ */
+var React = require('react');
 
-export const HomeView = () => (
-  <div>
-    <h4>Welcome!</h4>
-    <Button type={'primary'} >呵呵</Button>
-  </div>
-)
+var HomeView = React.createClass({
 
-export default HomeView
+    render: function() {
+        return (
+            <div />
+        );
+    }
+
+});
+
+module.exports = HomeView;

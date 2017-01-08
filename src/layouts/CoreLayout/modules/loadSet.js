@@ -27,7 +27,6 @@ export const actions = {
 //创建handlers
 const actionHandlers = {
   [LOAD_MAIN]: (state, action) => {
-    console.log('action handler===', state);
     let sta = Object.assign({}, state, {
       menu: action.data
     })

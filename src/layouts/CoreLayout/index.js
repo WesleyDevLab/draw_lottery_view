@@ -5,7 +5,7 @@ import reducer from './modules/loadSet'
 
 const Core = store => {
   injectReducer(store, {
-    key: 'home',
+    key: 'coreLayout',
     reducer
   })
   return CoreLayout;

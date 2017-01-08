@@ -22,12 +22,12 @@ class CoreLayout extends Component {
   render() {
     const {children, home} = this.props;
     const {menu} = home;
-    if(menu == null)
+    if (menu == null)
       return <div>正在加载...</div>
     return (
       <div>
             <div className="layout-aside">
-          <Sider menu={menu}/>
+            <Sider menu={menu}/>
               <div className="layout-main">
                     <Header/>
                     <div className="layout-container">
