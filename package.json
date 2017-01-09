@@ -1,7 +1,7 @@
 {
-  "name": "react-starter-kit",
-  "version": "0.2.0",
-  "description": "Get started with React, Redux, and React-Router!",
+  "name": "draw_lottery",
+  "version": "1.0.0",
+  "description": "闪电夺宝后台管理前端界面",
   "main": "index.js",
   "engines": {
     "node": ">=4.5.0",

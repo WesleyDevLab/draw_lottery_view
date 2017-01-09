@@ -119,7 +119,7 @@ class Commodity extends Component {
     const {data, loading, keys} = this.props.home;
     return (
       <div>
-      <Button type={'primary'} ><Link href='#'>添加商品</Link></Button>
+      <Button type={'primary'} ><Link to='/commodityManagement/add'>添加商品</Link></Button>
       <br/>
       <Tools model={null} handleClick={[]}/>
       <AutoComplete
