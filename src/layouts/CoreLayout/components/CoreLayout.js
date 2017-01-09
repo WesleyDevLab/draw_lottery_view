@@ -34,7 +34,7 @@ class CoreLayout extends Component {
                     <NextHeader/>
                         <div className="layout-content">
                             <div style={{
-        height: 590
+        minHeight: 590
       }}>
                         {children}
                     </div>

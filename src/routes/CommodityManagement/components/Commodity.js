@@ -12,20 +12,23 @@ import React, { Component } from 'react'
 import fetch from './../../../components/getFetch'
 const commodity = 'commodity'
 const filtersUrl = 'commodity/filters';
-import { Table } from 'antd';
+const keysUrl = 'commodity/keys';
+import Tools from './Tools'
+import { Table, AutoComplete, Button } from 'antd';
+import { Link } from 'react-router'
 
 const columns = [{
-  title: '商品编号',
+  title: '编号',
   dataIndex: 'id',
   sorter: true,
 }, {
-  title: '商品期数',
+  title: '期数',
   dataIndex: 'roundTime',
 }, {
-  title: '商品名称',
-  dataIndex: 'name'
+  title: '名称',
+  dataIndex: 'name',
 }, {
-  title: '商品属性',
+  title: '属性',
   dataIndex: 'genre',
   filters: [
     {
@@ -52,10 +55,10 @@ const columns = [{
     }
   }
 }, {
-  title: '商品分类',
-  dataIndex: 'typeName'
+  title: '分类',
+  dataIndex: 'typeName',
 }, {
-  title: '商品状态',
+  title: '状态',
   dataIndex: 'stateName',
 }, {
   title: '上架时间',
@@ -67,7 +70,7 @@ const columns = [{
   sorter: true,
   render: (text) => ((text == null || text == '') ? '暂无记录' : text)
 }, {
-  title: '商品点击量',
+  title: '点击量',
   dataIndex: 'viewNum',
   sorter: true,
 }, {
@@ -83,11 +86,104 @@ const columns = [{
   dataIndex: 'buyNowNumber',
   sorter: true,
 }];
+/*
+, {
+  title: '操作',
+  key: 'action',
+  fixed: 'right',
+  width: 200,
+  render: (text, record) => (
+    <span>
+      <Link href='#'>详情</Link>
+      <span className="ant-divider" />
+      <Link href='#'>设置</Link>
+      <span className="ant-divider" />
+      <Link href='#'>修改</Link>
+      <span className="ant-divider" />
+      <Link href='#'>删除</Link>
+      <span className="ant-divider" />
+      <Link href='#'>下架</Link>
+    </span>
+  ),
+}
+
+ */
 
 class Commodity extends Component {
   componentDidMount() {
     this.loadFilters();
     this.loadData();
+  }
+
+  render() {
+    const {data, loading, keys} = this.props.home;
+    return (
+      <div>
+      <Button type={'primary'} ><Link href='#'>添加商品</Link></Button>
+      <br/>
+      <Tools model={null} handleClick={[]}/>
+      <AutoComplete
+      dataSource={keys}
+      style={{
+        width: 200
+      }}
+      allowClear={true}
+      onChange={this.getKeys.bind(this)}
+      placeholder="输入商品名..."
+      size={'large'}
+      />
+      <br/>
+      
+      <Table columns={columns}
+      dataSource={data.list}
+      rowKey={'id'}
+      pagination={data}
+      rowSelection={this.selections()}
+      loading={loading}
+      bordered
+      onChange={this.handleTableChange.bind(this)}
+      />
+      </div>
+    )
+  }
+
+  selections() {
+    return {
+      onChange: (selectedRowKeys, selectedRows) => {
+        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      },
+      onSelect: (record, selected, selectedRows) => {
+        console.log(record, selected, selectedRows);
+      },
+      onSelectAll: (selected, selectedRows, changeRows) => {
+        console.log(selected, selectedRows, changeRows);
+      },
+      getCheckboxProps: record => ({
+        disabled: record.name === 'Disabled User', // Column configuration not to be checked
+      }),
+    };
+  }
+
+  getKeys(value) {
+    fetch(keysUrl + '?key=' + value, this.changeKeys(value).bind(this));
+  }
+  changeKeys(value) {
+
+    return data => {
+      const {showComplete} = this.props;
+      const loadData = this.loadData.bind(this);
+      loadData({
+        key: value
+      });
+      if (!value) {
+        showComplete([]);
+        return;
+      }
+      if (data.length > 1 && value != data[0])
+        showComplete([]);
+      else
+        showComplete(data);
+    }
   }
   handleTableChange(pagination, filters, sorter) {
     let order = 0;
@@ -117,7 +213,6 @@ class Commodity extends Component {
       order: order,
       direction: sorter.order == 'ascend' ? 1 : 0
     };
-    console.log(sort, filters);
     this.loadData({
       type: filters.typeName,
       state: filters.stateName,
@@ -151,16 +246,7 @@ class Commodity extends Component {
       });
     })
   }
-  render() {
-    const {data, loading} = this.props.home;
-    return <Table columns={columns}
-      dataSource={data.list}
-      rowKey={'id'}
-      pagination={data}
-      loading={loading}
-      onChange={this.handleTableChange.bind(this)}
-      />
-  }
+
 }
 
 export default Commodity;

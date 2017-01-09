@@ -26,7 +26,9 @@ const f = (url, func, options) => {
     }
   }
   const data = {};
-  const parseJSON = (response) => response.json();
+  const parseJSON = (response) => {
+    return response.json();
+  }
 
   const catchError = (error) => {
     console.error('request failed', error)

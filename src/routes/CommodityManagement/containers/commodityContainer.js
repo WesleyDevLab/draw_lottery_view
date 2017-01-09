@@ -8,17 +8,20 @@
  * 
  */
 
-import {showTable,showLoading} from './../modules/commodity'
-import {connect} from 'react-redux';
+import { showTable, showLoading, showComplete,toggleTools } from './../modules/commodity'
+import { connect } from 'react-redux';
 import Commodity from './../components/Commodity'
 
 const mapDispatchToProps = {
-    showTable,showLoading
+  showTable,
+  showLoading,
+  showComplete,
+  toggleTools
 }
 
-const mapStateToProps = (state)=>({
-    home:state.commodity
+const mapStateToProps = (state) => ({
+  home: state.commodity
 })
 
-export default connect(mapStateToProps,mapDispatchToProps)(Commodity);
+export default connect(mapStateToProps, mapDispatchToProps)(Commodity);
 
