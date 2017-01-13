@@ -1,11 +1,11 @@
 /**
  * 商品管理
- * draw_lottery Commodity.js build on Windows 
+ * draw_lottery Commodity.js build on Windows
  * @authors wuhongxu (wuhongxu1208@gmail.com)
  * @date    2017-01-08 23:11:52
  * @version $Id$
  * @link <link>https://userwu.github.io/</link>
- * 
+ *
  */
 
 import React, { Component } from 'react'
@@ -119,7 +119,7 @@ class Commodity extends Component {
     const {data, loading, keys} = this.props.home;
     return (
       <div>
-      <Button type={'primary'} ><Link to='/commodityManagement/add'>添加商品</Link></Button>
+      <Button type={'primary'} ><Link to='/commodityManagement/add'>添加模板</Link></Button>
       <br/>
       <Tools model={null} handleClick={[]}/>
       <AutoComplete
@@ -133,7 +133,7 @@ class Commodity extends Component {
       size={'large'}
       />
       <br/>
-      
+
       <Table columns={columns}
       dataSource={data.list}
       rowKey={'id'}

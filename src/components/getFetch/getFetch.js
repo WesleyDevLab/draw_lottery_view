@@ -1,14 +1,16 @@
 /**
  * 得到包装过的fetch对象，方便操作
- * draw_lottery getFetch.js build on Windows 
+ * draw_lottery getFetch.js build on Windows
  * @authors wuhongxu (wuhongxu1208@gmail.com)
  * @date    2017-01-08 18:52:36
  * @version $Id$
  * @link <link>https://userwu.github.io/</link>
- * 
+ *
  */
 import 'whatwg-fetch';
-const urlFront = 'http://127.0.0.1:8080/'
+import {STATIC_SERVE_PATH} from '../../constants';
+const urlFront = STATIC_SERVE_PATH + '/';
+import {message} from 'antd';
 
 const f = (url, func, options) => {
   if (func == null) {
@@ -20,6 +22,7 @@ const f = (url, func, options) => {
     if (response.status >= 200 && response.status < 300) {
       return response
     } else {
+      console.log(response.json());
       var error = new Error(response.statusText)
       error.response = response
       throw error
@@ -31,7 +34,7 @@ const f = (url, func, options) => {
   }
 
   const catchError = (error) => {
-    console.error('request failed', error)
+    message.error('error');
   }
   let defaultOptions = {
     checkStatus: checkStatus,
@@ -51,9 +54,14 @@ const f = (url, func, options) => {
   })
 
   fetch(request)
-    .then(opts.checkStatus)
     .then(opts.parseJSON)
-    .then(func).catch(opts.carchError);
+    .then(data => {
+      if (typeof data.success != 'undefined' && !data.success)
+        message.error(data.message);
+      else
+        func(data);
+
+    }).catch(opts.carchError);
 }
 
 export default f;

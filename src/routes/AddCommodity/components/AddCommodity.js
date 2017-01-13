@@ -4,17 +4,51 @@
  * @authors wuhongxu (wuhongxu1208@gmail.com)
  * @date    2017-01-09 14:27:26
  * @version $Id$
- * @link <link>https://userwu.github.io/</link>
+ * @link <a>https://userwu.github.io/</a>
  *
  */
 import React, {Component} from 'react'
-import {Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, Upload, DatePicker} from 'antd';
+import {
+  Form,
+  Input,
+  Tooltip,
+  Icon,
+  Cascader,
+  Select,
+  Row,
+  Col,
+  Checkbox,
+  Button,
+  Upload,
+  DatePicker,
+  InputNumber,
+  Modal,
+  message
+} from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 import fetch from './../../../components/getFetch'
-
+import {STATIC_SERVE_PATH} from '../../../constants'
+const genresSource = [{id: 0, name: '虚拟'}, {id: 1, name: '实体'}, {id: 2, name: '实体不可快递'}];
 const typesUrl = 'commodity/allType';
+const uploadFileUrl = STATIC_SERVE_PATH + '/commodity/uploadImage';
+const addUrl = '/commodity/save';
 export class _form extends Component {
+  handleMinimumChange(value) {
+    const {getFieldValue} = this.props.form;
+    const total = getFieldValue('buyTotalNumber') || value;
+    const minimum = getFieldValue('minimum') || value;
+    console.log(total, minimum);
+    if (total % minimum != 0) {
+      Modal.error({
+        title: '错误输入',
+        content: '最低购买量应该能够被总需整除',
+      });
+      return false;
+    }
+    return true;
+  };
+
   constructor(props) {
     super(props);
   }
@@ -24,11 +58,65 @@ export class _form extends Component {
     fetch(typesUrl, loadType);
   }
 
-  handleSubmit() {
+  handleSubmit(e) {
+    e.preventDefault();
+    const {getFieldValue} = this.props.form;
+
+    let values = this.props.form.getFieldsValue();
+    const {coverUrl} = this.props.home;
+    if (coverUrl == null) {
+      message.error('你还没有上传封面图片');
+      return false;
+    }
+    values.coverImgUrl = coverUrl;
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        fetch(addUrl, data => message.success(data.message), {data: this.props.form.getFieldsValue()})
+      }
+    });
+  }
+
+  onUploadCover(info) {
+    const {saveCoverImgUrl} = this.props;
+    if (info.file.status === 'done') {
+      saveCoverImgUrl(info.file.response.data);
+      message.success(info.file.response.message);
+    } else if (info.file.status === 'error') {
+      message.error(info.file.response.message);
+    }
+  }
+
+  handleChangeCard(e) {
+    const {panels} = this.props.home;
+    const {showPanel} = this.props;
+    panels.second = e.target.checked == true;
+    showPanel(panels);
+  }
+
+  handleChooseGenre(value) {
+    const {panels} = this.props.home;
+    const {showPanel} = this.props;
+
+    panels.first = value == '2';
+    showPanel(panels);
+  }
+
+  handleChangWin(e) {
+    const {panels} = this.props.home;
+    const {showPanel} = this.props;
+    panels.third = e.target.checked == true;
+    showPanel(panels);
+  }
+
+  handleChangeExchange(e) {
+    const {panels} = this.props.home;
+    const {showPanel} = this.props;
+    panels.four = e.target.checked == true;
+    showPanel(panels);
   }
 
   render() {
-    const {typeSources} = this.props.home;
+    const {typeSources, panels} = this.props.home;
     const {getFieldDecorator} = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -47,8 +135,18 @@ export class _form extends Component {
     const shortStyle = {
       width: 200
     };
+
+    const fileProp = {
+      name: 'file',
+      action: uploadFileUrl,
+      listType: 'picture',
+      onChange: this.onUploadCover.bind(this)
+    }
+
+
+    const {coverUrl} = this.props.home;
     return (
-      <Form onSubmit={this.handleSubmit}>
+      <Form onSubmit={this.handleSubmit.bind(this)}>
         <FormItem label={'商品名称'} hasFeedback {...formItemLayout}>
           {getFieldDecorator('name', {
             rules: [{
@@ -57,23 +155,19 @@ export class _form extends Component {
             }]
           })(<Input/>)}
         </FormItem>
-        <FormItem label={'商品分类'} hasFeedback {...formItemLayout}>
+        <FormItem label={'商品分类'} {...formItemLayout}>
           {getFieldDecorator('type', {
             rules: [{
               required: true,
               message: '请输入商品分类'
             }]
           })(<Select
-            showSearch
             style={shortStyle}
-            placeholder="选择分类"
-            optionFilterProp="children"
-            filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+            placeholder='选择分类'
           >
-            {typeSources.map(item => {
-              console.log(item);
-              return <Option value={item.id}>{item.name}</Option>
-            })}
+            {typeSources.map(item => (
+              <Option value={item.id + ''} key={'' + item.id}>{item.name}</Option>
+            ))}
           </Select>)}
           <Button icon={'plus-circle-o'} style={{
             position: 'absolute',
@@ -87,116 +181,124 @@ export class _form extends Component {
               message: '请输入商品属性'
             }]
           })(<Select
-            showSearch
-            placeholder="选择属性"
+            placeholder='选择属性'
+            onChange={this.handleChooseGenre.bind(this)}
             style={shortStyle}
-            optionFilterProp="children"
-            filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
           >
-            <Option value="jack">Jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="tom">Tom</Option>
+            {genresSource.map(item => <Option key={'' + item.id} value={item.id + ''}>{item.name}</Option>)}
           </Select>)}
         </FormItem>
-        <FormItem label={'领奖联系人'} hasFeedback {...formItemLayout}>
-          {getFieldDecorator('contactName', {
-            rules: [{
-              required: true,
-              message: '请输入联系人姓名'
-            }]
-          })(<Input/>)}
-        </FormItem>
-        <FormItem label={'领奖电话'} hasFeedback {...formItemLayout}>
-          {getFieldDecorator('contactPhone', {
-            rules: [{
-              required: true,
-              message: '请输入联系人电话'
-            }]
-          })(<Input/>)}
-        </FormItem>
-        <FormItem label={'领奖地址'} hasFeedback {...formItemLayout}>
-          {getFieldDecorator('contactAddress', {
-            rules: [{
-              required: true,
-              message: '请输入领奖地址'
-            }]
-          })(<Input/>)}
-        </FormItem>
+        {!panels.first ? <div/> : (<div><FormItem label={'领奖联系人'} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('contactName', {
+              rules: [{
+                required: true,
+                message: '请输入联系人姓名'
+              }]
+            })(<Input/>)}
+          </FormItem>
+            <FormItem label={'领奖电话'} hasFeedback {...formItemLayout}>
+              {getFieldDecorator('contactPhone', {
+                rules: [{
+                  required: true,
+                  message: '请输入联系人电话'
+                }]
+              })(<Input/>)}
+            </FormItem>
+            <FormItem label={'领奖地址'} hasFeedback {...formItemLayout}>
+              {getFieldDecorator('contactAddress', {
+                rules: [{
+                  required: true,
+                  message: '请输入领奖地址'
+                }]
+              })(<Input/>)}
+            </FormItem></div>)}
         <FormItem lable={'虚拟产品'}  {...tailFormItemLayout}>
-          {getFieldDecorator('remember', {
+          {getFieldDecorator('sendCard', {
             valuePropName: 'checked',
-            initialValue: true,
           })(
-            <Checkbox>是否发卡</Checkbox>
+            <Checkbox onChange={this.handleChangeCard.bind(this)}>是否发卡</Checkbox>
           )}
         </FormItem>
-        <FormItem label={'卡类型'} {...formItemLayout} hasFeedback>
-          {getFieldDecorator('cardType', {
-            rules: [{
-              required: true,
-              message: '请输入发卡类型'
-            }]
-          })(<Select
-            showSearch
-            style={shortStyle}
-            placeholder="选择类型"
-            optionFilterProp="children"
-            filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-          >
-            <Option value="jack">Jack</Option>
-            <Option value="lucy">Lucy</Option>
-            <Option value="tom">Tom</Option>
-          </Select>)}
-        </FormItem>
-        <FormItem label={'发卡数量'} {...formItemLayout} hasFeedback>
-          {getFieldDecorator('cardNum', {
-            rules: [{
-              required: true,
-              message: '请输入发卡数量'
-            }]
-          })(<Input/>)}
-        </FormItem>
-        <FormItem label={'发卡金额'} {...formItemLayout} hasFeedback>
-          {getFieldDecorator('cardMoney', {
-            rules: [{
-              required: true,
-              message: '请输入发卡金额'
-            }]
-          })(<Input/>)}
-        </FormItem>
-        <FormItem  {...tailFormItemLayout} hasFeedback>
-          {getFieldDecorator('remember', {
-            valuePropName: 'checked',
-            initialValue: true,
-          })(
-            <Checkbox>是否支持提现</Checkbox>
-          )}
-        </FormItem>
-        <FormItem label={'提现金额'} {...formItemLayout} hasFeedback>
-          {getFieldDecorator('withdrawals')(<Input/>)}
-        </FormItem>
+        {!panels.second ? <div/> : <div>
+            <FormItem label={'卡类型'} {...formItemLayout}>
+              {getFieldDecorator('cardType', {
+                rules: [{
+                  required: true,
+                  message: '请输入发卡类型'
+                }]
+              })(<Select
+                showSearch
+                style={shortStyle}
+                placeholder='选择类型'
+                optionFilterProp='children'
+                filterOption={(input, option) => option.props.value.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              >
+                <Option value='0'>移动</Option>
+                <Option value='1'>联通</Option>
+                <Option value='2'>电信</Option>
+              </Select>)}
+            </FormItem>
+            <FormItem label={'发卡数量'} {...formItemLayout} hasFeedback>
+              {getFieldDecorator('cardNum', {
+                rules: [{
+                  required: true,
+                  message: '请输入发卡数量'
+                }]
+              })(<InputNumber/>)}
+            </FormItem>
+            <FormItem label={'发卡金额'} {...formItemLayout} hasFeedback>
+              {getFieldDecorator('cardMoney', {
+                rules: [{
+                  required: true,
+                  message: '请输入发卡金额'
+                }]
+              })(<InputNumber/>)}
+            </FormItem>
+          </div>}
         <FormItem  {...tailFormItemLayout}>
-          {getFieldDecorator('exchangable', {
+          {getFieldDecorator('withdrawals', {
             valuePropName: 'checked',
-            initialValue: true,
+            initialValue: false,
           })(
-            <Checkbox>是否支持折换闪币</Checkbox>
+            <Checkbox onChange={this.handleChangWin.bind(this)}>是否支持提现</Checkbox>
           )}
         </FormItem>
-        <FormItem label={'折换金额'}  {...formItemLayout}>
-          {getFieldDecorator('exchangeMoney')(<Input/>)}
+        {!panels.third ? <div/> : <FormItem label={'提现金额'} {...formItemLayout} hasFeedback>
+            {getFieldDecorator('withdrawalsMoney', {
+              rules: [{
+                required: true,
+                message: '请输入提现金额'
+              }]
+            })(<InputNumber/>)}
+          </FormItem>}
+        <FormItem  {...tailFormItemLayout}>
+          {getFieldDecorator('exchangeable', {
+            valuePropName: 'checked',
+          })(
+            <Checkbox onChange={this.handleChangeExchange.bind(this)}>是否支持折换闪币</Checkbox>
+          )}
         </FormItem>
+        {!panels.four ? <div/> : <FormItem label={'折换金额'}  {...formItemLayout}>
+            {getFieldDecorator('exchangeMoney', {
+              rules: [{
+                required: true,
+                message: '请输入折换金额'
+              }]
+            })(<InputNumber/>)}
+          </FormItem>}
         <FormItem label={'商品封面'} {...formItemLayout} hasFeedback>
-          {getFieldDecorator('upload', {
-            valuePropName: 'fileList',
-            normalize: this.normFile,
-          })(
-            <Upload name="logo" action="/upload.do" listType="picture" onChange={this.handleUpload}>
-              <Button type="ghost">
-                <Icon type="upload"/> Click to upload
-              </Button>
-            </Upload>
-          )}
+          {getFieldDecorator('coverImgUrl', {
+            rules: [{
+              required: true,
+              message: '请输入图文详情'
+            }],
+            initialValue: coverUrl
+          })(<Input style={{display: 'none'}}/>)}
+          <Upload {...fileProp}>
+            <Button type='ghost'>
+              <Icon type='upload'/> Click to upload
+            </Button>
+          </Upload>
         </FormItem>
         <FormItem label={'商品图文'} {...formItemLayout} hasFeedback>
           {getFieldDecorator('content', {
@@ -207,63 +309,60 @@ export class _form extends Component {
           })(<Input type={'textarea'} rows={3}/>)}
         </FormItem>
         <FormItem  {...tailFormItemLayout}>
-          {getFieldDecorator('esayWinning', {
+          {getFieldDecorator('easyWinning', {
             valuePropName: 'checked',
             initialValue: false,
           })(
             <Checkbox>高中奖率</Checkbox>
           )}
         </FormItem>
-        <FormItem label={'总需'} {...formItemLayout} hasFeedback>
+        <FormItem label={'总需'} {...formItemLayout}>
           {getFieldDecorator('buyTotalNumber', {
             rules: [{
               required: true,
               message: '请输入总需人数'
             }],
-          })(<Input/>)}
+            trigger: 'onChange',
+          })(<InputNumber onBlur={this.handleMinimumChange.bind(this)}/>)}<span>人次</span>
         </FormItem>
-        <FormItem label={'最低购买数'}  {...formItemLayout} hasFeedback>
+        <FormItem label={'最低购买数'}  {...formItemLayout}>
           {getFieldDecorator('minimum', {
             rules: [{
               required: true,
-              message: '请输入总需人数'
+              message: '请输入最低购买人数'
             }],
-            initialValue: '1',
-          })(<Input/>)}
+            trigger: 'onChange',
+            initialValue: 1,
+          })(<InputNumber onBlur={this.handleMinimumChange.bind(this)}/>)}
+          <span>人次</span>
         </FormItem>
         <FormItem   {...tailFormItemLayout}>
-          {getFieldDecorator('auto_round', {
+          {getFieldDecorator('autoRound', {
             valuePropName: 'checked',
             initialValue: false,
           })(<Checkbox>自动下一期</Checkbox>)}
         </FormItem>
         <FormItem label={'设置开奖时间（分钟）'}  {...formItemLayout} hasFeedback>
-          {getFieldDecorator('openTime')(<Input/>)}
+          {getFieldDecorator('openTime')(<InputNumber/>)}
         </FormItem>
         <FormItem
-          {...formItemLayout} hasFeedback
-          label="上架时间"
+          {...formItemLayout}
+          label='上架时间'
+          extra="若不设置将立即上架"
         >
-          {getFieldDecorator('date-time-picker', {
-            rules: [{
-              type: 'object',
-              required: true,
-              message: 'Please select time!'
-            }]
-          })(
-            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss"/>
+          {getFieldDecorator('groundTime')(
+            <DatePicker showTime format='YYYY-MM-DD HH:mm:ss'/>
           )}
+        </FormItem>
+        <FormItem wrapperCol={{span: 8, offset: 4}}>
+          <Button type="primary" htmlType="submit">
+            保存
+          </Button>
         </FormItem>
       </Form>
     )
   }
 }
 
-const AddCommodity = Form.create({
-  onFieldsChange: (props, fields) => {
-    console.log(props, fields)
-  },
-  mapPropsToFields: (props) => {
-  }
-})(_form);
+const AddCommodity = Form.create()(_form);
 export default AddCommodity;
