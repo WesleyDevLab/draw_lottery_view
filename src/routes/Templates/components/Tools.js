@@ -24,6 +24,7 @@ export default class Tools extends Component {
       fetch(groundUrl, (data) => {
         if (data.success) {
           message.success(data.message);
+          console.log('callback',callback);
           callback();
         } else
           message.error(data.message);

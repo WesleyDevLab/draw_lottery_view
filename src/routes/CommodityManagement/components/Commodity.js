@@ -8,14 +8,14 @@
  *
  */
 
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import fetch from './../../../components/getFetch'
 const commodity = 'commodity'
 const filtersUrl = 'commodity/filters';
 const keysUrl = 'commodity/keys';
 import Tools from './Tools'
-import { Table, AutoComplete, Button } from 'antd';
-import { Link } from 'react-router'
+import {Table, AutoComplete, Button} from 'antd';
+import {Link} from 'react-router'
 
 const columns = [{
   title: '编号',
@@ -87,25 +87,25 @@ const columns = [{
   sorter: true,
 }];
 /*
-, {
-  title: '操作',
-  key: 'action',
-  fixed: 'right',
-  width: 200,
-  render: (text, record) => (
-    <span>
-      <Link href='#'>详情</Link>
-      <span className="ant-divider" />
-      <Link href='#'>设置</Link>
-      <span className="ant-divider" />
-      <Link href='#'>修改</Link>
-      <span className="ant-divider" />
-      <Link href='#'>删除</Link>
-      <span className="ant-divider" />
-      <Link href='#'>下架</Link>
-    </span>
-  ),
-}
+ , {
+ title: '操作',
+ key: 'action',
+ fixed: 'right',
+ width: 200,
+ render: (text, record) => (
+ <span>
+ <Link href='#'>详情</Link>
+ <span className="ant-divider" />
+ <Link href='#'>设置</Link>
+ <span className="ant-divider" />
+ <Link href='#'>修改</Link>
+ <span className="ant-divider" />
+ <Link href='#'>删除</Link>
+ <span className="ant-divider" />
+ <Link href='#'>下架</Link>
+ </span>
+ ),
+ }
 
  */
 
@@ -116,57 +116,59 @@ class Commodity extends Component {
   }
 
   render() {
-    const {data, loading, keys} = this.props.home;
+    const {data, loading, keys, choose, tableState} = this.props.home;
     return (
       <div>
-      <Button type={'primary'} ><Link to='/commodityManagement/add'>添加模板</Link></Button>
-      <br/>
-      <Tools model={null} handleClick={[]}/>
-      <AutoComplete
-      dataSource={keys}
-      style={{
-        width: 200
-      }}
-      allowClear={true}
-      onChange={this.getKeys.bind(this)}
-      placeholder="输入商品名..."
-      size={'large'}
-      />
-      <br/>
+        <div className="mine-row">
 
-      <Table columns={columns}
-      dataSource={data.list}
-      rowKey={'id'}
-      pagination={data}
-      rowSelection={this.selections()}
-      loading={loading}
-      bordered
-      onChange={this.handleTableChange.bind(this)}
-      />
+          <Button type={'primary'}><Link to='/commodityManagement/add'>添加模板</Link></Button>
+          <span className="ant-divider"/>
+          <Button type={'primary'}><Link to='/commodityManagement/templates'>管理模板</Link></Button>
+        </div>
+
+        <div className="mine-row">
+          <AutoComplete
+            dataSource={keys}
+            style={{
+              width: 200
+            }}
+            allowClear={true}
+            onChange={this.getKeys.bind(this)}
+            placeholder="输入商品名..."
+            size={'large'}
+          /><span className="ant-divider"/><Tools keys={choose} callback={() => {
+          if (tableState.page == null) {
+            this.loadData();
+          } else
+            this.loadData(tableState, tableState.page.current);
+        }}/>
+        </div>
+        <Table columns={columns}
+               dataSource={data.list}
+               rowKey={'id'}
+               pagination={data}
+               rowSelection={this.selections()}
+               loading={loading}
+               bordered
+               onChange={this.handleTableChange.bind(this)}
+        />
       </div>
     )
   }
 
   selections() {
+    const {onChoose} = this.props;
     return {
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-      },
-      onSelect: (record, selected, selectedRows) => {
-        console.log(record, selected, selectedRows);
-      },
-      onSelectAll: (selected, selectedRows, changeRows) => {
-        console.log(selected, selectedRows, changeRows);
-      },
-      getCheckboxProps: record => ({
-        disabled: record.name === 'Disabled User', // Column configuration not to be checked
-      }),
+        onChoose(selectedRowKeys);
+      }
     };
   }
 
   getKeys(value) {
     fetch(keysUrl + '?key=' + value, this.changeKeys(value).bind(this));
   }
+
   changeKeys(value) {
 
     return data => {
@@ -185,6 +187,7 @@ class Commodity extends Component {
         showComplete(data);
     }
   }
+
   handleTableChange(pagination, filters, sorter) {
     let order = 0;
     switch (sorter.field) {
@@ -213,13 +216,19 @@ class Commodity extends Component {
       order: order,
       direction: sorter.order == 'ascend' ? 1 : 0
     };
-    this.loadData({
+
+
+    const {saveTableState} = this.props;
+    const tableState = {
       type: filters.typeName,
       state: filters.stateName,
       genre: filters.genre,
       ...sort
-    }, pagination.current);
+    };
+    saveTableState(Object.assign({}, tableState, {page: pagination}));
+    this.loadData(tableState, pagination.current);
   }
+
   loadData(params = {}, p = 1) {
     const {showLoading, showTable} = this.props;
     showLoading();
@@ -227,6 +236,7 @@ class Commodity extends Component {
       data: params
     });
   }
+
   loadFilters() {
     fetch(filtersUrl, (data) => {
       columns[4].filters = [];
