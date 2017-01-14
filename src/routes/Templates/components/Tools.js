@@ -49,7 +49,7 @@ export default class Tools extends Component {
       <span>
       <Button onClick={this.ground.bind(this)}>上架</Button>
       <span className="ant-divider"/>
-      <Button onClick={this.unground.bind(this)}>下架</Button>
+      {/*<Button onClick={this.unground.bind(this)}>下架</Button>*/}
         {/*<span className="ant-divider"/>
          <Button onClick={handleClick[2]}>修改</Button>
          <span className="ant-divider"/>
