@@ -7,7 +7,7 @@
  * @link <a>https://userwu.github.io/</a>
  *
  */
-import { injectReducer } from '../../store/reducers'
+import {injectReducer} from '../../store/reducers'
 export default (store) => ({
   path: 'commodityManagement/cardManagement',
   /*  Async getComponent is only invoked when route matches   */

@@ -9,9 +9,11 @@
  */
 
 import React, {Component} from 'react'
-import {Table} from 'antd'
+import {Table, Button, Modal, message} from 'antd'
+import ModalForm from './ModalForm'
 import fetch from './../../../components/getFetch'
-const getCardsUrl = '/getCards';
+const getCardsUrl = 'commodity/getCards';
+const [addUrl, deleteUrl, updateUrl] = ['commodity/addCard', 'commodity/deleteCards', 'commodity/updateCard'];
 const columns = [{
   title: '编号',
   dataIndex: 'id',
@@ -92,15 +94,86 @@ export default class CardManagement extends Component {
     };
   }
 
+  add() {
+
+  }
+
+  delete() {
+    const {keys, callback} = this.props;
+    if (keys != null)
+      fetch(deleteUrl, (data) => {
+        if (data.success) {
+          message.success(data.message);
+          callback();
+        } else
+          message.error(data.message);
+      }, {data: keys});
+  }
+
+  update() {
+    const {keys, callback} = this.props;
+    if (keys != null)
+      fetch(updateUrl, (data) => {
+        if (data.success) {
+          message.success(data.message);
+          callback();
+        } else
+          message.error(data.message);
+      }, {data: keys});
+  }
+
+  toAdd() {
+    const {showModal} = this.props;
+    showModal({title: '添加卡密'});
+  }
+
+  handleOk() {
+    const {showConfirm} = this.props;
+    showConfirm();
+  }
+
+  handleCancel() {
+    const {hideModal} = this.props;
+    hideModal();
+  }
+
+  after() {
+    const {hideConfirm} = this.props;
+    hideConfirm();
+  }
+
   render() {
     const {source} = this.props.home;
-    return (<Table columns={columns}
-                   dataSource={source.list}
-                   rowKey={'id'}
-                   pagination={source}
-                   rowSelection={this.selections()}
-                   bordered
-                   onChange={this.handleTableChange.bind(this)}
-    />)
+    const {visible, confirmLoading, modalSource} = this.props.home;
+
+    return (
+      <div>
+        <div className="mine-row">
+          <span>
+        <Button onClick={this.toAdd.bind(this)}>增加</Button>
+      <span className="ant-divider"/>
+      <Button onClick={this.delete.bind(this)}>删除</Button>
+        <span className="ant-divider"/>
+        <Button onClick={this.update.bind(this)}>修改</Button>
+      </span>
+        </div>
+        <Table columns={columns}
+               dataSource={source.list}
+               rowKey={'id'}
+               pagination={source}
+               rowSelection={this.selections()}
+               bordered
+               onChange={this.handleTableChange.bind(this)}
+        />
+        <Modal title={modalSource.title}
+               visible={visible}
+               onOk={this.handleOk.bind(this)}
+               confirmLoading={confirmLoading}
+               onCancel={this.handleCancel.bind(this)}
+        >
+          <ModalForm submit={confirmLoading} after={this.after.bind(this)}/>
+        </Modal>
+      </div>
+    )
   }
 }

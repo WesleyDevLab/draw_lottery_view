@@ -9,7 +9,17 @@
  */
 
 import {connect} from 'react-redux'
-import {showData, showLoading, saveTableState, onChoose} from './../modules/cardManagement'
+import {
+  showData,
+  showLoading,
+  saveTableState,
+  onChoose,
+  showModal,
+  hideConfirm,
+  hideModal,
+  showConfirm,
+  submitForm,
+} from './../modules/cardManagement'
 import Card from './../components/CardManagement'
 
 export const mapStateToProps = (state) => ({
@@ -21,6 +31,11 @@ export const mapDispatchToProps = {
   showLoading,
   saveTableState,
   onChoose,
+  showModal,
+  hideConfirm,
+  hideModal,
+  showConfirm,
+  submitForm,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Card);

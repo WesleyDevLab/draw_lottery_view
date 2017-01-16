@@ -233,6 +233,7 @@ class Commodity extends Component {
 
   loadData(params = {}, p = 1) {
     const {showLoading, showTable} = this.props;
+    console.log(params);
     showLoading();
     fetch(commodity + '?p=' + p, showTable, {
       data: params
