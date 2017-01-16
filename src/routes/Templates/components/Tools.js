@@ -11,8 +11,7 @@
 import React, {Component} from 'react'
 import {Button, message} from 'antd'
 import fetch from './../../../components/getFetch'
-const groundUrl = 'commodity/ground';
-const underUrl = 'commodity/under';
+const groundUrl = 'commodity/groundTemp';
 export default class Tools extends Component {
   constructor(props) {
     super(props);
@@ -25,18 +24,6 @@ export default class Tools extends Component {
         if (data.success) {
           message.success(data.message);
           console.log('callback',callback);
-          callback();
-        } else
-          message.error(data.message);
-      }, {data: keys});
-  }
-
-  unground() {
-    const {keys,callback} = this.props;
-    if (keys != null)
-      fetch(underUrl, (data) => {
-        if (data.success) {
-          message.success(data.message);
           callback();
         } else
           message.error(data.message);
