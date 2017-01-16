@@ -8,7 +8,16 @@
  *
  */
 import {connect} from 'react-redux'
-import {test, loadType, showPanel, sendMiniError, saveCoverImgUrl,changeCode,setToken} from './../modules/formHandle'
+import {
+  test,
+  loadType,
+  showPanel,
+  sendMiniError,
+  saveCoverImgUrl,
+  changeCode,
+  setToken,
+  saveImages
+} from './../modules/formHandle'
 import AddCommodity from './../components/AddCommodity'
 
 export const mapStateToProps = (state) => ({
@@ -16,7 +25,7 @@ export const mapStateToProps = (state) => ({
 })
 
 export const mapDispatchToProps = {
-  test, loadType, showPanel, sendMiniError, saveCoverImgUrl,changeCode,setToken
+  test, loadType, showPanel, sendMiniError, saveCoverImgUrl, changeCode, setToken, saveImages
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddCommodity)

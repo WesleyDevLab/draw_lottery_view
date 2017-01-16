@@ -17,6 +17,7 @@ const SAVE_FILE = 'SAVE_FILE';
 const SAVE_COVER = 'SAVE_COVER';
 export const CHANGE_CODE = 'CHANGE_CODE';
 export const SET_TOKEN = 'SET_TOKEN';
+export const SAVE_IMAGES = 'SAVE_IMAGES';
 export const test = (data) => ({
   type: TEST,
   data: data
@@ -58,6 +59,11 @@ export const setToken = (token) => ({
   data: token,
 })
 
+export const saveImages = (images) => ({
+  type: SAVE_IMAGES,
+  data: images,
+})
+
 export const actions = {
   test,
   loadType,
@@ -67,6 +73,7 @@ export const actions = {
   saveCoverImgUrl,
   changeCode,
   setToken,
+  saveImages,
 };
 
 export const actionHandlers = {
@@ -93,6 +100,9 @@ export const actionHandlers = {
   }),
   [SET_TOKEN]: (state, action) => Object.assign({}, state, {
     token: action.data
+  }),
+  [SAVE_IMAGES]: (state, action) => Object.assign({}, state, {
+    images: action.data
   })
 };
 
@@ -104,7 +114,8 @@ const initialState = {
   file: null,
   coverUrl: null,
   code: "# Markdown",
-  token: null
+  token: null,
+  images: null,
 };
 
 const reducer = (state = initialState, action) => {

@@ -60,7 +60,8 @@ export class _form extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const {getFieldValue} = this.props.form;
+
+
 
     let values = this.props.form.getFieldsValue();
     const {coverUrl} = this.props.home;
@@ -68,10 +69,20 @@ export class _form extends Component {
       message.error('你还没有上传封面图片');
       return false;
     }
+
     values.coverImgUrl = coverUrl;
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        fetch(addUrl, data => message.success(data.message), {data: this.props.form.getFieldsValue()})
+        let data = this.props.form.getFieldsValue();
+        const {images} = this.props.home;
+        if (images.length > 0) {
+          const imgs = [];
+          images.map((item, index) => {
+            imgs.push(item.url);
+          })
+          data.images = imgs;
+        }
+        fetch(addUrl, data => message.success(data.message), {data: data})
       }
     });
   }
@@ -115,6 +126,34 @@ export class _form extends Component {
     showPanel(panels);
   }
 
+  handleChangeImages(info) {
+    let fileList = info.fileList;
+    console.log(info);
+    // 1. Limit the number of uploaded files
+    //    Only to show two recent uploaded files, and old ones will be replaced by the new
+    //fileList = fileList.slice(-2);
+
+    // 2. read from response and show file link
+    fileList = fileList.map((file) => {
+      if (file.response) {
+        // Component will show file.url as link
+        file.url = file.response.data;
+      }
+      return file;
+    });
+
+    // 3. filter successfully uploaded files according to response from server
+    fileList = fileList.filter((file) => {
+      if (file.response) {
+        return file.response.success === true;
+      }
+      return true;
+    });
+    console.log(fileList);
+    const {saveImages} = this.props;
+    saveImages(fileList);
+  }
+
   render() {
     const {typeSources, panels} = this.props.home;
     const {getFieldDecorator} = this.props.form;
@@ -144,7 +183,7 @@ export class _form extends Component {
     }
 
 
-    const {coverUrl} = this.props.home;
+    const {coverUrl, images} = this.props.home;
     return (
       <Form onSubmit={this.handleSubmit.bind(this)}>
         <FormItem label={'商品名称'} hasFeedback {...formItemLayout}>
@@ -294,9 +333,22 @@ export class _form extends Component {
             }],
             initialValue: coverUrl
           })(<Input style={{display: 'none'}}/>)}
-          <Upload {...fileProp}>
+          <Upload {...fileProp} disabled={!(coverUrl == null || coverUrl == '')}>
             <Button type='ghost'>
-              <Icon type='upload'/> Click to upload
+              <Icon type='upload'/> 点击上传
+            </Button>
+          </Upload>
+        </FormItem>
+        <FormItem label={'商品图片'}
+                  {...formItemLayout}
+                  hasFeedback>
+          <Upload action={uploadFileUrl}
+                  onChange={this.handleChangeImages.bind(this)}
+                  multiple={true}
+                  fileList={images}
+                  listType="picture">
+            <Button type='ghost'>
+              <Icon type='upload'/> 点击上传
             </Button>
           </Upload>
         </FormItem>
