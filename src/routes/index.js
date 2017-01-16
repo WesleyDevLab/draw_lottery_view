@@ -11,6 +11,7 @@ import Commodity from './CommodityManagement'
 import AddCommodity from './AddCommodity'
 import Template from './Templates'
 import CardManagement from './CardManagement'
+import AddType from './AddType'
 /*  Note: Instead of using JSX, we recommend using react-router
  PlainRoute objects to build route definitions.   */
 
@@ -25,6 +26,7 @@ export const createRoutes = (store) => ({
     RouteRoute(store),
     Commodity(store),
     AddCommodity(store),
+    AddType(store),
     Template(store),
     CardManagement(store),
     PageNotFound(),

@@ -69,6 +69,22 @@ class _from extends Component {
             </Select>
           )}
         </Item>
+        <Item  {...formItemLayout} label={'金额'}>
+          {getFieldDecorator('money', {
+            initialValue: '10',
+            rules: [{
+              required: true,
+              message: '请选择金额'
+            }]
+          })(
+            <Select>
+              <Option value={'10'}>10元</Option>
+              <Option value={'30'}>30元</Option>
+              <Option value={'50'}>50元</Option>
+              <Option value={'100'}>100元</Option>
+            </Select>
+          )}
+        </Item>
         <Item  {...formItemLayout} label={'卡号'}>
           {getFieldDecorator('cardNum',{
             rules: [{
@@ -89,22 +105,7 @@ class _from extends Component {
             <Input type="password"/>
           )}
         </Item>
-        <Item  {...formItemLayout} label={'金额'}>
-          {getFieldDecorator('money', {
-            initialValue: '10',
-            rules: [{
-              required: true,
-              message: '请选择金额'
-            }]
-          })(
-            <Select>
-              <Option value={'10'}>10元</Option>
-              <Option value={'30'}>30元</Option>
-              <Option value={'50'}>50元</Option>
-              <Option value={'100'}>100元</Option>
-            </Select>
-          )}
-        </Item>
+
       </Form>
     )
   }

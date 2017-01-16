@@ -126,6 +126,8 @@ class Commodity extends Component {
           <Button type={'primary'}><Link to='/commodityManagement/templates'>管理模板</Link></Button>
           <span className="ant-divider"/>
           <Button type={'primary'}><Link to="commodityManagement/cardManagement">卡密管理</Link></Button>
+          <span className="ant-divider"/>
+          <Button type="primary"><Link to="commodityManagement/addType">添加类型</Link></Button>
         </div>
 
         <div className="mine-row">

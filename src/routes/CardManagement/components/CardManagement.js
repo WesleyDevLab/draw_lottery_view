@@ -9,8 +9,9 @@
  */
 
 import React, {Component} from 'react'
-import {Table, Button, Modal, message} from 'antd'
-import ModalForm from './ModalForm'
+import {Table, Button, Modal, message,Form, Select, Input} from 'antd'
+const Item = Form.Item;
+const Option = Select.Option;
 import fetch from './../../../components/getFetch'
 const getCardsUrl = 'commodity/getCards';
 const [addUrl, deleteUrl, updateUrl] = ['commodity/addCard', 'commodity/deleteCards', 'commodity/updateCard'];
@@ -52,12 +53,13 @@ const columns = [{
     }
   }
 }];
-export default class CardManagement extends Component {
+class CardManagement extends Component {
   componentDidMount() {
     this.loadData();
   }
 
   loadData(params = {}, p = 1) {
+    console.log('load');
     const {showLoading, showData} = this.props;
     showLoading();
     fetch(getCardsUrl + '?p=' + p, showData, {
@@ -130,6 +132,7 @@ export default class CardManagement extends Component {
   handleOk() {
     const {showConfirm} = this.props;
     showConfirm();
+    this.handleSubmit();
   }
 
   handleCancel() {
@@ -140,12 +143,42 @@ export default class CardManagement extends Component {
   after() {
     const {hideConfirm} = this.props;
     hideConfirm();
+    this.loadData();
+  }
+
+  handleSubmit() {
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        fetch(addUrl, data => {
+          message.success(data.message);
+          this.after();
+        }, {data: this.props.form.getFieldsValue()})
+      }
+    });
   }
 
   render() {
     const {source} = this.props.home;
     const {visible, confirmLoading, modalSource} = this.props.home;
+    const formItemLayout = {
+      labelCol: {
+        span: 6
+      },
+      wrapperCol: {
+        span: 14
+      },
+    };
+    const tailFormItemLayout = {
+      wrapperCol: {
+        span: 14,
+        offset: 6,
+      },
+    };
+    const shortStyle = {
+      width: 200
+    };
 
+    const {getFieldDecorator} = this.props.form;
     return (
       <div>
         <div className="mine-row">
@@ -171,9 +204,64 @@ export default class CardManagement extends Component {
                confirmLoading={confirmLoading}
                onCancel={this.handleCancel.bind(this)}
         >
-          <ModalForm submit={confirmLoading} after={this.after.bind(this)}/>
+          <Form onSubmit={this.handleSubmit.bind(this)}>
+            <Item {...formItemLayout} label={'运营商'}>
+              {getFieldDecorator('corporation', {
+                initialValue: '0',
+                rules: [{
+                  required: true,
+                  message: '请选择运营商'
+                }]
+              })(
+                <Select>
+                  <Option value={'0'}>移动</Option>
+                  <Option value={'1'}>联通</Option>
+                  <Option value={'2'}>电信</Option>
+                </Select>
+              )}
+            </Item>
+            <Item  {...formItemLayout} label={'金额'}>
+              {getFieldDecorator('money', {
+                initialValue: '10',
+                rules: [{
+                  required: true,
+                  message: '请选择金额'
+                }]
+              })(
+                <Select>
+                  <Option value={'10'}>10元</Option>
+                  <Option value={'30'}>30元</Option>
+                  <Option value={'50'}>50元</Option>
+                  <Option value={'100'}>100元</Option>
+                </Select>
+              )}
+            </Item>
+            <Item  {...formItemLayout} label={'卡号'}>
+              {getFieldDecorator('cardNum', {
+                rules: [{
+                  required: true,
+                  message: '请输入卡号'
+                }]
+              })(
+                <Input/>
+              )}
+            </Item>
+            <Item  {...formItemLayout} label={'密码'}>
+              {getFieldDecorator('password', {
+                rules: [{
+                  required: true,
+                  message: '请输入密码'
+                }]
+              })(
+                <Input type="password"/>
+              )}
+            </Item>
+
+          </Form>
         </Modal>
       </div>
     )
   }
 }
+
+export default Form.create()(CardManagement);

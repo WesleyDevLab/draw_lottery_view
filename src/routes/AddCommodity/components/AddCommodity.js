@@ -342,15 +342,18 @@ export class _form extends Component {
         <FormItem label={'商品图片'}
                   {...formItemLayout}
                   hasFeedback>
-          <Upload action={uploadFileUrl}
-                  onChange={this.handleChangeImages.bind(this)}
-                  multiple={true}
-                  fileList={images}
-                  listType="picture">
+          {getFieldDecorator('imaddd',{rules:[{
+            required:true,
+            message:'',
+          }]})(<Upload action={uploadFileUrl}
+                       onChange={this.handleChangeImages.bind(this)}
+                       multiple={true}
+                       fileList={images}
+                       listType="picture">
             <Button type='ghost'>
               <Icon type='upload'/> 点击上传
             </Button>
-          </Upload>
+          </Upload>)}
         </FormItem>
         <FormItem label={'商品图文'} {...formItemLayout} hasFeedback>
           {getFieldDecorator('content', {
