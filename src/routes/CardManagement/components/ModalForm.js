@@ -18,12 +18,14 @@ class _from extends Component {
 
   handleSubmit() {
     const {after} = this.props;
-    this.props.form.validateFields((err, values) => {
+    const {validateFields,resetFields,getFieldsValue} = this.props.form;
+    validateFields((err, values) => {
       if (!err) {
         fetch(addUrl, data => {
           message.success(data.message);
+          resetFields();
           after();
-        }, {data: this.props.form.getFieldsValue()})
+        }, {data: getFieldsValue()})
       }
     });
   }
@@ -48,7 +50,6 @@ class _from extends Component {
     };
 
     const {getFieldDecorator} = this.props.form;
-    const {confirm} = this.props;
     const {submit} = this.props;
     if(submit)
       this.handleSubmit();
@@ -102,7 +103,7 @@ class _from extends Component {
               message: '请输入密码'
             }]
           })(
-            <Input type="password"/>
+            <Input/>
           )}
         </Item>
 

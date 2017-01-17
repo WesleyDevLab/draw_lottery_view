@@ -8,7 +8,7 @@
  *
  */
 
-import {saveImgUrl} from './../modules/addType'
+import {saveImg,resetState} from './../modules/addType'
 import {connect} from 'react-redux'
 import AddType from './../components/AddType'
 export const mapStateToProps = (state)=>({
@@ -16,7 +16,7 @@ export const mapStateToProps = (state)=>({
 })
 
 export const mapDispatchToProps = {
-  saveImgUrl,
+  saveImg,resetState,
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(AddType);

@@ -8,22 +8,29 @@
  *
  */
 
-export const SAVE_IMG_URL = 'SAVE_IMG_URL';
+export const SAVE_IMG = 'SAVE_IMG';
+export const RESET_STATE = 'RESET_STATE';
 
-export const saveImgUrl = (url) => ({
-  type: SAVE_IMG_URL,
+export const saveImg = (url) => ({
+  type: SAVE_IMG,
   data: url,
 });
 
+export const resetState = () => ({
+  type: RESET_STATE,
+})
+
 export const actions = {
-  saveImgUrl,
+  saveImg,
+  resetState,
 }
 
 export const actionHandlers = {
-  [SAVE_IMG_URL]: (state, action) => Object.assign({}, state, {imgUrl: action.data}),
+  [SAVE_IMG]: (state, action) => Object.assign({}, state, {img: action.data}),
+  [RESET_STATE]: (state, action) => Object.assign({}, state, {img: null})
 }
 const initialState = {
-  imgUrl: null
+  img: null
 }
 export const reducer = (state = initialState, action) => {
   const handler = actionHandlers[action.type];

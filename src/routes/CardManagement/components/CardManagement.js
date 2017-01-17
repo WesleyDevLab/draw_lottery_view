@@ -26,6 +26,9 @@ const columns = [{
   title: '密码',
   dataIndex: 'password',
 }, {
+  title:'面额',
+  dataIndex:'money',
+},{
   title: '运营商',
   dataIndex: 'corporation',
   filters: [
@@ -59,7 +62,6 @@ class CardManagement extends Component {
   }
 
   loadData(params = {}, p = 1) {
-    console.log('load');
     const {showLoading, showData} = this.props;
     showLoading();
     fetch(getCardsUrl + '?p=' + p, showData, {
@@ -147,12 +149,14 @@ class CardManagement extends Component {
   }
 
   handleSubmit() {
-    this.props.form.validateFields((err, values) => {
+    const {validateFields,resetFields,getFieldsValue} = this.props.form;
+    validateFields((err, values) => {
       if (!err) {
         fetch(addUrl, data => {
           message.success(data.message);
+          resetFields();
           this.after();
-        }, {data: this.props.form.getFieldsValue()})
+        }, {data: getFieldsValue()})
       }
     });
   }
@@ -253,7 +257,7 @@ class CardManagement extends Component {
                   message: '请输入密码'
                 }]
               })(
-                <Input type="password"/>
+                <Input/>
               )}
             </Item>
 

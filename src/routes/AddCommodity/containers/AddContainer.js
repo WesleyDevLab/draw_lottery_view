@@ -9,14 +9,11 @@
  */
 import {connect} from 'react-redux'
 import {
-  test,
   loadType,
   showPanel,
-  sendMiniError,
-  saveCoverImgUrl,
-  changeCode,
-  setToken,
-  saveImages
+  saveImages,
+  saveCoverImage,
+  resetForm,
 } from './../modules/formHandle'
 import AddCommodity from './../components/AddCommodity'
 
@@ -25,7 +22,7 @@ export const mapStateToProps = (state) => ({
 })
 
 export const mapDispatchToProps = {
-  test, loadType, showPanel, sendMiniError, saveCoverImgUrl, changeCode, setToken, saveImages
+  loadType, showPanel, saveImages,saveCoverImage,resetForm,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddCommodity)

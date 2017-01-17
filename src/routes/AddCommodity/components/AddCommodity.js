@@ -38,7 +38,6 @@ export class _form extends Component {
     const {getFieldValue} = this.props.form;
     const total = getFieldValue('buyTotalNumber') || value;
     const minimum = getFieldValue('minimum') || value;
-    console.log(total, minimum);
     if (total % minimum != 0) {
       Modal.error({
         title: '错误输入',
@@ -49,10 +48,6 @@ export class _form extends Component {
     return true;
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     const {loadType} = this.props;
     fetch(typesUrl, loadType);
@@ -60,21 +55,12 @@ export class _form extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-
-
-
-    let values = this.props.form.getFieldsValue();
-    const {coverUrl} = this.props.home;
-    if (coverUrl == null) {
-      message.error('你还没有上传封面图片');
-      return false;
-    }
-
-    values.coverImgUrl = coverUrl;
-    this.props.form.validateFields((err, values) => {
+    const {validateFields, resetFields, getFieldsValue, getFieldValue} = this.props.form;
+    validateFields((err, values) => {
       if (!err) {
-        let data = this.props.form.getFieldsValue();
-        const {images} = this.props.home;
+        let data = getFieldsValue();
+        data.coverImgUrl = getFieldValue('coverImgUrl').file.url;
+        const images = getFieldValue('images').fileList;
         if (images.length > 0) {
           const imgs = [];
           images.map((item, index) => {
@@ -82,19 +68,43 @@ export class _form extends Component {
           })
           data.images = imgs;
         }
-        fetch(addUrl, data => message.success(data.message), {data: data})
+        fetch(addUrl, data => {
+          message.success(data.message);
+          this.init();
+        }, {data: data})
       }
     });
   }
 
+  /**
+   * 封面图片处理
+   * @param info
+   */
   onUploadCover(info) {
-    const {saveCoverImgUrl} = this.props;
     if (info.file.status === 'done') {
-      saveCoverImgUrl(info.file.response.data);
       message.success(info.file.response.message);
+      info.file.url = info.file.response.data;
     } else if (info.file.status === 'error') {
       message.error(info.file.response.message);
     }
+
+    let fileList = info.fileList;
+    //限制上传成功的最近一个文件
+    fileList = fileList.slice(-1);
+    fileList = fileList.map((file) => {
+      if (file.response) {
+        file.url = file.response.data;
+      }
+      return file;
+    });
+    fileList = fileList.filter((file) => {
+      if (file.response) {
+        return file.response.success === true;
+      }
+      return true;
+    });
+    const {saveCoverImage} = this.props;
+    saveCoverImage(fileList);
   }
 
   handleChangeCard(e) {
@@ -126,36 +136,37 @@ export class _form extends Component {
     showPanel(panels);
   }
 
+  /**
+   * 商品图片banner处理
+   * @param info
+   */
   handleChangeImages(info) {
     let fileList = info.fileList;
-    console.log(info);
-    // 1. Limit the number of uploaded files
-    //    Only to show two recent uploaded files, and old ones will be replaced by the new
-    //fileList = fileList.slice(-2);
-
-    // 2. read from response and show file link
     fileList = fileList.map((file) => {
       if (file.response) {
-        // Component will show file.url as link
         file.url = file.response.data;
       }
       return file;
     });
-
-    // 3. filter successfully uploaded files according to response from server
     fileList = fileList.filter((file) => {
       if (file.response) {
         return file.response.success === true;
       }
       return true;
     });
-    console.log(fileList);
     const {saveImages} = this.props;
     saveImages(fileList);
   }
 
+  init() {
+    const {resetFields,} = this.props.form;
+    resetFields();
+    const {resetForm} = this.props;
+    resetForm();
+  }
+
   render() {
-    const {typeSources, panels} = this.props.home;
+    const {typeSources, panels, coverImg} = this.props.home;
     const {getFieldDecorator} = this.props.form;
     const formItemLayout = {
       labelCol: {
@@ -175,13 +186,6 @@ export class _form extends Component {
       width: 200
     };
 
-    const fileProp = {
-      name: 'file',
-      action: uploadFileUrl,
-      listType: 'picture',
-      onChange: this.onUploadCover.bind(this)
-    }
-
 
     const {coverUrl, images} = this.props.home;
     return (
@@ -191,7 +195,11 @@ export class _form extends Component {
             rules: [{
               required: true,
               message: '请输入商品名称'
-            }]
+            },{
+              max:50,
+              message:'最大50个字符',
+            }],
+
           })(<Input/>)}
         </FormItem>
         <FormItem label={'商品分类'} {...formItemLayout}>
@@ -208,10 +216,6 @@ export class _form extends Component {
               <Option value={item.id + ''} key={'' + item.id}>{item.name}</Option>
             ))}
           </Select>)}
-          <Button icon={'plus-circle-o'} style={{
-            position: 'absolute',
-            right: 100
-          }}>添加分类</Button>
         </FormItem>
         <FormItem label={'商品属性'} {...formItemLayout}>
           {getFieldDecorator('genre', {
@@ -266,7 +270,6 @@ export class _form extends Component {
                   message: '请输入发卡类型'
                 }]
               })(<Select
-                showSearch
                 style={shortStyle}
                 placeholder='选择类型'
                 optionFilterProp='children'
@@ -291,7 +294,12 @@ export class _form extends Component {
                   required: true,
                   message: '请输入发卡金额'
                 }]
-              })(<InputNumber/>)}
+              })(<Select style={shortStyle}>
+                <Option value='10'>10元</Option>
+                <Option value='30'>30元</Option>
+                <Option value='50'>50元</Option>
+                <Option value='100'>100元</Option>
+              </Select>)}
             </FormItem>
           </div>}
         <FormItem  {...tailFormItemLayout}>
@@ -329,27 +337,32 @@ export class _form extends Component {
           {getFieldDecorator('coverImgUrl', {
             rules: [{
               required: true,
-              message: '请输入图文详情'
-            }],
-            initialValue: coverUrl
-          })(<Input style={{display: 'none'}}/>)}
-          <Upload {...fileProp} disabled={!(coverUrl == null || coverUrl == '')}>
+              message: '请上传封面'
+            }]
+          })(<Upload name="file"
+                     action={uploadFileUrl}
+                     listType="picture"
+                     onChange={this.onUploadCover.bind(this)}
+                     fileList={coverImg}>
             <Button type='ghost'>
               <Icon type='upload'/> 点击上传
             </Button>
-          </Upload>
+          </Upload>)}
+
         </FormItem>
         <FormItem label={'商品图片'}
                   {...formItemLayout}
                   hasFeedback>
-          {getFieldDecorator('imaddd',{rules:[{
-            required:true,
-            message:'',
-          }]})(<Upload action={uploadFileUrl}
-                       onChange={this.handleChangeImages.bind(this)}
-                       multiple={true}
-                       fileList={images}
-                       listType="picture">
+          {getFieldDecorator('images', {
+            rules: [{
+              required: true,
+              message: '请上传商品图片',
+            }]
+          })(<Upload action={uploadFileUrl}
+                     onChange={this.handleChangeImages.bind(this)}
+                     multiple={true}
+                     fileList={images}
+                     listType="picture">
             <Button type='ghost'>
               <Icon type='upload'/> 点击上传
             </Button>
@@ -394,7 +407,7 @@ export class _form extends Component {
         <FormItem   {...tailFormItemLayout}>
           {getFieldDecorator('autoRound', {
             valuePropName: 'checked',
-            initialValue: false,
+            initialValue: true,
           })(<Checkbox>自动下一期</Checkbox>)}
         </FormItem>
         <FormItem label={'设置开奖时间（分钟）'}  {...formItemLayout} hasFeedback>

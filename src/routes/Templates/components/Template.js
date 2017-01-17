@@ -115,7 +115,6 @@ export default class Template extends Component {
     const {onChoose} = this.props;
     return {
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(selectedRowKeys);
         onChoose(selectedRowKeys);
       }
     };

@@ -73,7 +73,7 @@ const actionHandlers = {
   }),
   [SHOW_MODAL]: (state, action) => Object.assign({}, state, {visible: true, modalSource: action.data}),
   [SHOW_CONFIRM_LOADING]: (state) => Object.assign({}, state, {confirmLoading: true}),
-  [HIDE_CONFIRM_LOADING]: (state) => Object.assign({}, state, {confirmLoading: false, visible: false}),
+  [HIDE_CONFIRM_LOADING]: (state) => Object.assign({}, state, {confirmLoading: false}),
   [HIDE_MODAL]: (state) => Object.assign({}, state, {visible: false}),
   [SUBMIT]:(state) => Object.assign({},state,{submit:true}),
 }

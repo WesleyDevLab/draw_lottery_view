@@ -17,28 +17,55 @@ const uploadFileUrl = STATIC_SERVE_PATH + '/commodity/uploadImage';
 const addUrl = 'commodity/addType'
 export class _form extends Component {
   onUploadCover(info) {
-    const {saveImgUrl} = this.props;
-    const {setFieldsValue} = this.props.form;
     if (info.file.status === 'done') {
-      setFieldsValue({imgUrl: info.file.response.data});
       message.success(info.file.response.message);
+      info.file.url = info.file.response.data;
     } else if (info.file.status === 'error') {
       message.error(info.file.response.message);
     }
+
+    let fileList = info.fileList;
+    //限制上传成功的最近一个文件
+    fileList = fileList.slice(-1);
+    fileList = fileList.map((file) => {
+      if (file.response) {
+        file.url = file.response.data;
+      }
+      return file;
+    });
+    fileList = fileList.filter((file) => {
+      if (file.response) {
+        return file.response.success === true;
+      }
+      return true;
+    });
+    const {saveImg} = this.props;
+    saveImg(fileList);
   }
+
   handleSubmit(e) {
     e.preventDefault();
-
-
-    this.props.form.validateFields((err, values) => {
+    const {validateFields, getFieldsValue, getFieldValue} = this.props.form;
+    validateFields((err, values) => {
       if (!err) {
-        let data = this.props.form.getFieldsValue();
-        fetch(addUrl, data => message.success(data.message), {data: data})
+        let data = getFieldsValue();
+        data.imgUrl = getFieldValue('imgUrl').file.url;
+        fetch(addUrl, data => {
+          message.success(data.message);
+          this.init();
+        }, {data: data})
       }
     });
   }
+
+  init(){
+    const {resetFields,} = this.props.form;
+    resetFields();
+    const {resetState} = this.props;
+    resetState();
+  }
+
   render() {
-    console.log(this.props);
     const formItemLayout = {
       labelCol: {
         span: 6
@@ -47,20 +74,14 @@ export class _form extends Component {
         span: 14
       },
     };
-    const tailFormItemLayout = {
-      wrapperCol: {
-        span: 14,
-        offset: 6,
-      },
-    };
     const fileProp = {
       name: 'file',
       action: uploadFileUrl,
       listType: 'picture',
-      onChange: this.onUploadCover.bind(this)
+      onChange: this.onUploadCover.bind(this),
     }
     const {getFieldDecorator} = this.props.form;
-    const {imgUrl} = this.props.home;
+    const {img} = this.props.home;
     return (
       <Form onSubmit={this.handleSubmit.bind(this)}>
         <Item label={'类型名'} {...formItemLayout}>
@@ -73,15 +94,17 @@ export class _form extends Component {
         </Item>
 
         <Item label={'类型图标'} {...formItemLayout}>
-          {getFieldDecorator('imgUrl',{rules:[{
-            required:true,
-            message:'必须上传图标'
-          }]})(<Input style={{display: 'none'}}/>)}
-          <Upload {...fileProp} disabled={!(imgUrl == null || imgUrl == '')}>
+          {getFieldDecorator('imgUrl', {
+            rules: [{
+              required: true,
+              message: '必须上传图标'
+            }]
+          })(<Upload {...fileProp} fileList={img}>
             <Button type='ghost'>
               <Icon type='upload'/> 点击上传
             </Button>
-          </Upload>
+          </Upload>)}
+
         </Item>
         <Item wrapperCol={{span: 8, offset: 11}}>
           <Button type="primary" htmlType="submit">
