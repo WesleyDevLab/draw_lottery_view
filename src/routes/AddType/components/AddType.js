@@ -16,6 +16,9 @@ import fetch from './../../../components/getFetch'
 const uploadFileUrl = STATIC_SERVE_PATH + '/commodity/uploadImage';
 const addUrl = 'commodity/addType'
 export class _form extends Component {
+  componentWillMount(){
+    this.init();
+  }
   onUploadCover(info) {
     if (info.file.status === 'done') {
       message.success(info.file.response.message);

@@ -139,6 +139,8 @@ class CardManagement extends Component {
 
   handleCancel() {
     const {hideModal} = this.props;
+    const {resetFields} = this.props.form;
+    resetFields();
     hideModal();
   }
 

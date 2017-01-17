@@ -48,6 +48,10 @@ export class _form extends Component {
     return true;
   };
 
+  componentWillMount(){
+    this.init();
+  }
+
   componentDidMount() {
     const {loadType} = this.props;
     fetch(typesUrl, loadType);
@@ -262,7 +266,7 @@ export class _form extends Component {
             <Checkbox onChange={this.handleChangeCard.bind(this)}>是否发卡</Checkbox>
           )}
         </FormItem>
-        {!panels.second ? <div/> : <div>
+        {!panels.second ? '' : <div>
             <FormItem label={'卡类型'} {...formItemLayout}>
               {getFieldDecorator('cardType', {
                 rules: [{
@@ -288,7 +292,7 @@ export class _form extends Component {
                 }]
               })(<InputNumber/>)}
             </FormItem>
-            <FormItem label={'发卡金额'} {...formItemLayout} hasFeedback>
+            <FormItem label={'发卡金额'} {...formItemLayout}>
               {getFieldDecorator('cardMoney', {
                 rules: [{
                   required: true,
