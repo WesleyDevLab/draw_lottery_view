@@ -21,7 +21,7 @@ class Sider extends Component {
           </Menu.Item>
             <Menu.Item key="2">
             <Link to='/commodityManagement'><Icon type="shopping-cart" /> {menuItems[1]}</Link></Menu.Item>
-            <Menu.Item key="3"><Icon type="calculator" />{menuItems[2]}</Menu.Item>
+          <Menu.Item key="3"><Link to='/order'><Icon type="calculator" />{menuItems[2]}</Link></Menu.Item>
             <Menu.Item key="4"><Icon type="team" />{menuItems[3]}</Menu.Item>
           <Menu.Item key="5"><Icon type="share-alt" />{menuItems[4]}</Menu.Item>
             <Menu.Item key="6"><Icon type="pay-circle-o" />{menuItems[5]}</Menu.Item>

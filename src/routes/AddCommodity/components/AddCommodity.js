@@ -48,7 +48,7 @@ export class _form extends Component {
     return true;
   };
 
-  componentWillMount(){
+  componentWillMount() {
     this.init();
   }
 
@@ -163,10 +163,10 @@ export class _form extends Component {
   }
 
   init() {
-    const {resetFields,} = this.props.form;
-    resetFields();
-    const {resetForm} = this.props;
-    resetForm();
+    // const {resetFields,} = this.props.form;
+    //  resetFields();
+    //  const {resetForm} = this.props;
+    //  resetForm();
   }
 
   render() {
@@ -199,9 +199,9 @@ export class _form extends Component {
             rules: [{
               required: true,
               message: '请输入商品名称'
-            },{
-              max:50,
-              message:'最大50个字符',
+            }, {
+              max: 50,
+              message: '最大50个字符',
             }],
 
           })(<Input/>)}
@@ -259,6 +259,13 @@ export class _form extends Component {
                 }]
               })(<Input/>)}
             </FormItem></div>)}
+        <FormItem label={''}  {...tailFormItemLayout}>
+          {getFieldDecorator('express', {
+            valuePropName: 'checked',
+          })(
+            <Checkbox>快递收货</Checkbox>
+          )}
+        </FormItem>
         <FormItem lable={'虚拟产品'}  {...tailFormItemLayout}>
           {getFieldDecorator('sendCard', {
             valuePropName: 'checked',
