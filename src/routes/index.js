@@ -19,7 +19,7 @@ import Order from './OrderManagement'
 export const createRoutes = (store) => ({
   path: '/',
   component: CoreLayout(store),
-  indexRoute: Home,
+  indexRoute: Home(store),
   childRoutes: [
     CounterRoute(store),
     ZenRoute(store),

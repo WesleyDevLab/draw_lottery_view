@@ -20,6 +20,11 @@ const f = (url, func, options) => {
   //响应异常处理
   const checkStatus = (response) => {
     if (response.status >= 200 && response.status < 300) {
+      console.log(response);
+      if(response == null || response == ''){
+        message.error("没有获取到任何信息哟");
+        return {};
+      }
       return response
     } else {
       var error = new Error(response.statusText)

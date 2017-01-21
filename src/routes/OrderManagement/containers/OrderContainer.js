@@ -8,7 +8,16 @@
  *
  */
 
-import {loadData, showLoading, showComplete} from './../modules/order'
+import {
+  loadData,
+  showLoading,
+  showComplete,
+  loadFilters,
+  loadDetails,
+  showDetailsModal,
+  showDeliveryModal,
+  saveDeliveryId,
+} from './../modules/order'
 import {connect} from 'react-redux'
 import Order from './../components/Order'
 export const mapStateToProps = (state) => ({
@@ -19,6 +28,11 @@ export const mapDispatchToProps = {
   loadData,
   showLoading,
   showComplete,
+  loadFilters,
+  loadDetails,
+  showDetailsModal,
+  showDeliveryModal,
+  saveDeliveryId,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Order)

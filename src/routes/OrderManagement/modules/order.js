@@ -12,6 +12,10 @@ export const LOAD_DATA = 'LOAD_DATA';
 export const SHOW_LOADING = 'SHOW_LOADING';
 export const SHOW_COMPLETE = 'SHOW_COMPLETE';
 export const LOAD_FILTERS = 'LOAD_FILTERS';
+export const SHOW_DETAILS_MODAL = 'SHOW_DETAILS_MODAL';
+export const LOAD_DETAILS = 'LOAD_DETAILS';
+export const SHOW_DELIVERY_MODAL = 'SHOW_DELIVERY_MODAL';
+export const SAVE_DELI_ID = 'SAVE_DELI_ID';
 export const loadData = (data) => ({
   type: LOAD_DATA,
   data: data,
@@ -23,15 +27,35 @@ export const showComplete = (data) => ({
   type: SHOW_COMPLETE,
   data: data,
 })
-export const loadFilter = (data) => ({
+export const loadFilters = (data) => ({
   type: LOAD_FILTERS,
   data: data,
+})
+export const loadDetails = (data) => ({
+  type: LOAD_DETAILS,
+  data: data,
+})
+export const showDetailsModal = (show) => ({
+  type:SHOW_DETAILS_MODAL,
+  data:show,
+})
+export const showDeliveryModal = (show) => ({
+  type:SHOW_DELIVERY_MODAL,
+  data:show,
+})
+export const saveDeliveryId = (id) => ({
+  type:SAVE_DELI_ID,
+  data:id,
 })
 export const actions = {
   loadData,
   showLoading,
   showComplete,
-  loadFilter,
+  loadFilters,
+  loadDetails,
+  showDetailsModal,
+  showDeliveryModal,
+  saveDeliveryId,
 }
 
 export const actionHandlers = {
@@ -39,6 +63,10 @@ export const actionHandlers = {
   [SHOW_LOADING]: (state) => Object.assign({}, state, {loading: true}),
   [SHOW_COMPLETE]: (state, action) => (Object.assign({}, state, {keys: action.data})),
   [LOAD_FILTERS]: (state, action) => (Object.assign({}, state, {filters: action.data})),
+  [LOAD_DETAILS]: (state, action) => (Object.assign({}, state, {details: action.data})),
+  [SHOW_DETAILS_MODAL]:(state,action) => (Object.assign({},state,{detailsVisible:action.data,})),
+  [SHOW_DELIVERY_MODAL]:(state,action)=>(Object.assign({},state,{deliveryVisible:action.data})),
+  [SAVE_DELI_ID]:(state,action)=>Object.assign({},state,{deliveryId:action.data}),
 }
 
 export const initialState = {
@@ -46,6 +74,10 @@ export const initialState = {
   loading: false,
   keys: [],
   filters: [],
+  details: null,
+  detailsVisible:false,
+  deliveryVisible:false,
+  deliveryId:null,
 }
 
 export const reducer = (state = initialState, action) => {

@@ -163,10 +163,10 @@ export class _form extends Component {
   }
 
   init() {
-    // const {resetFields,} = this.props.form;
-    //  resetFields();
-    //  const {resetForm} = this.props;
-    //  resetForm();
+    const {resetFields,} = this.props.form;
+     resetFields();
+     const {resetForm} = this.props;
+     resetForm();
   }
 
   render() {
