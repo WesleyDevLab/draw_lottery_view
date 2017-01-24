@@ -4,8 +4,6 @@ import { browserHistory } from 'react-router'
 import makeRootReducer from './reducers'
 import { updateLocation } from './location'
 
-import DevTools from '../components/DevTools'
-
 export default (initialState = {}) => {
   // ======================================================
   // Middleware Configuration
@@ -32,8 +30,6 @@ export default (initialState = {}) => {
     compose(
       applyMiddleware(...middleware),
       ...enhancers,
-      //必须的！启用带有monitors（监视显示）的DevTools
-      DevTools.instrument(),
     )
   )
   store.asyncReducers = {}

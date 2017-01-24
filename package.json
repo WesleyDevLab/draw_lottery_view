@@ -73,7 +73,7 @@
     "type": "git",
     "url": "git+https://github.com/bodyno/react-starter-kit.git"
   },
-  "author": "Nobody <az8321550@gmail.com> (https://bodyno.com)",
+  "author": "wuhongxu <wuhongxu1208@gmail.com> (https://userwu.github.com)",
   "license": "WTFPL",
   "dependencies": {
     "antd": "^2.6.1",
@@ -97,7 +97,6 @@
     "node-sass": "^4.0.0",
     "normalize.css": "^4.1.1",
     "postcss-loader": "^0.13.0",
-    "qiniu.js": "^0.1.1",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
     "react-redux": "^5.0.1",
@@ -112,8 +111,7 @@
     "wangeditor": "^2.1.22",
     "webpack": "^1.12.14",
     "whatwg-fetch": "^2.0.1",
-    "yargs": "^5.0.0",
-    "qiniu": "latest"
+    "yargs": "^5.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.17.0",

@@ -2,8 +2,6 @@ import React, { Component, PropTypes } from 'react'
 import { browserHistory, Router } from 'react-router'
 import { Provider } from 'react-redux'
 
-import DevTools from '../components/DevTools'
-
 class AppContainer extends Component {
   static propTypes = {
     routes: PropTypes.object.isRequired,
@@ -17,10 +15,7 @@ class AppContainer extends Component {
 
     return (
       <Provider store={store}>
-          <div>
           <Router history={browserHistory} children={routes} />
-          <DevTools/>
-          </div>
       </Provider>
     )
   }

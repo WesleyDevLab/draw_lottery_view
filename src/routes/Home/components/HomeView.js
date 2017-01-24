@@ -23,10 +23,11 @@ export default class HomeView extends Component {
     const {data} = this.props.home;
     return (
       <div>
+
         {data?cors.map((cor,index1)=>(
           moneys.map((money,index2)=>(
             <div>
-              {cor}-{money}：{data[index1*3+index2]}
+              {cor}-----{money}：{data[index1*3+index2]}
             </div>
           ))
         )):<Spin />}

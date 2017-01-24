@@ -19,7 +19,7 @@ import {Link} from 'react-router'
 
 const columns = [{
   title: '编号',
-  dataIndex: 'id',
+  dataIndex: 'commodityId',
   sorter: true,
 }, {
   title: '期数',

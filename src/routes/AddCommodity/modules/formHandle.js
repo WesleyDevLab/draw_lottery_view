@@ -7,12 +7,12 @@
  * @link <link>https://userwu.github.io/</link>
  *
  */
-
 const SHOW_PANEL = 'SHOW_PANEL';
 export const LOAD_TYPE = 'LOAD_TYPE';
 export const SAVE_IMAGES = 'SAVE_IMAGES';
 export const SAVE_COVER_IMAGE = 'SAVE_COVER_IMAGE';
 export const RESET_FORM = 'RESET_STATE';
+
 
 export const loadType = (data) => ({
   type: LOAD_TYPE,
@@ -30,13 +30,13 @@ export const saveImages = (images) => ({
   data: images,
 })
 
-export const saveCoverImage = (img) =>({
-  type:SAVE_COVER_IMAGE,
-  data:img,
+export const saveCoverImage = (img) => ({
+  type: SAVE_COVER_IMAGE,
+  data: img,
 })
 
 export const resetForm = () => ({
-  type:RESET_FORM,
+  type: RESET_FORM,
 })
 
 export const actions = {
@@ -57,21 +57,22 @@ export const actionHandlers = {
   [SAVE_IMAGES]: (state, action) => Object.assign({}, state, {
     images: action.data
   }),
-  [SAVE_COVER_IMAGE]:(state,action) => Object.assign({},state,{
-    coverImg:action.data,
+  [SAVE_COVER_IMAGE]: (state, action) => Object.assign({}, state, {
+    coverImg: action.data,
   }),
-  [RESET_FORM]:(state)=>Object.assign({},state,{
+  [RESET_FORM]: (state) => Object.assign({}, state, {
     panels: {first: false, second: false, third: false, four: false, five: false},
     images: null,
-    coverImg:null,
+    coverImg: null,
   }),
 };
+
 
 const initialState = {
   typeSources: [],
   panels: {first: false, second: false, third: false, four: false, five: false},
   images: null,
-  coverImg:null,
+  coverImg: null,
 };
 
 const reducer = (state = initialState, action) => {

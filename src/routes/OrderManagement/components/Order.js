@@ -18,6 +18,7 @@ const keysUrl = 'order/keys';
 const filtersUrl = 'order/filters';
 const detailsUrl = 'order/details';
 const deliveryUrl = 'order/delivery';
+const deleteUrl = 'order/delete';
 const DetailForm = (props) => {
   const formItemLayout = {
     labelCol: {
@@ -168,6 +169,10 @@ class Order extends Component {
     fetch(keysUrl + '?key=' + value, this.changeKeys(value).bind(this));
   }
 
+  handleDelete(id){
+    console.log(id);
+    fetch(detailsUrl+'?id='+id,(data)=>this.pullData());
+  }
   handleDetails(id) {
     const {showDetailsModal, loadDetails} = this.props;
     showDetailsModal(true);
@@ -264,9 +269,10 @@ class Order extends Component {
               opts.push(<a key='5'>追踪</a>);
               opts.push(<span key='6' className="ant-divider"/>)
             }
+            opts.pop();
             {/*opts.push(<a key='7'>修改</a>);
             opts.push(<span className="ant-divider" key='8'/>);*/}
-            opts.push(<a key='9'>删除</a>);
+            {/*opts.push(<a onClick={this.handleDelete.bind(this,record.commodityId)} key='9'>删除</a>);*/}
             return opts;
           }}/>
 

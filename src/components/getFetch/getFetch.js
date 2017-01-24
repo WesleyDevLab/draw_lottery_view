@@ -13,15 +13,16 @@ const urlFront = STATIC_SERVE_PATH + '/';
 import {message} from 'antd';
 
 const f = (url, func, options) => {
-  if (func == null) {
-    console.error('操作不能为空！');
-    return;
+  if (func == null || typeof func != 'function') {
+    func = (data) => {
+      message.success(data)
+    }
   }
   //响应异常处理
   const checkStatus = (response) => {
     if (response.status >= 200 && response.status < 300) {
       console.log(response);
-      if(response == null || response == ''){
+      if (response == null || response == '') {
         message.error("没有获取到任何信息哟");
         return {};
       }

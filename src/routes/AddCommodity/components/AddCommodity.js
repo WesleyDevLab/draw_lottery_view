@@ -23,16 +23,19 @@ import {
   DatePicker,
   InputNumber,
   Modal,
-  message
+  message,
 } from 'antd';
-const FormItem = Form.Item;
-const Option = Select.Option;
 import fetch from './../../../components/getFetch'
 import {STATIC_SERVE_PATH} from '../../../constants'
+import RichText from './../../../components/RichText'
+
+const FormItem = Form.Item;
+const Option = Select.Option;
 const genresSource = [{id: 0, name: '虚拟'}, {id: 1, name: '实体'}, {id: 2, name: '实体不可快递'}];
 const typesUrl = 'commodity/allType';
 const uploadFileUrl = STATIC_SERVE_PATH + '/commodity/uploadImage';
 const addUrl = '/commodity/save';
+const ButtonGroup = Button.Group;
 export class _form extends Component {
   handleMinimumChange(value) {
     const {getFieldValue} = this.props.form;
@@ -59,6 +62,7 @@ export class _form extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
+
     const {validateFields, resetFields, getFieldsValue, getFieldValue} = this.props.form;
     validateFields((err, values) => {
       if (!err) {
@@ -164,9 +168,9 @@ export class _form extends Component {
 
   init() {
     const {resetFields,} = this.props.form;
-     resetFields();
-     const {resetForm} = this.props;
-     resetForm();
+    resetFields();
+    const {resetForm} = this.props;
+    resetForm();
   }
 
   render() {
@@ -379,13 +383,15 @@ export class _form extends Component {
             </Button>
           </Upload>)}
         </FormItem>
-        <FormItem label={'商品图文'} {...formItemLayout} hasFeedback>
+        <FormItem label={'商品图文'} labelCol={{span:6}} wrapperCol={{span:18}} hasFeedback>
           {getFieldDecorator('content', {
             rules: [{
               required: true,
               message: '请输入图文详情'
-            }]
-          })(<Input type={'textarea'} rows={3}/>)}
+            }],
+            valuePropName:'content',
+            initialValue:'<p>请输入商品详情</p>',
+          })(<RichText  id="editor1"/>)}
         </FormItem>
         <FormItem  {...tailFormItemLayout}>
           {getFieldDecorator('easyWinning', {
