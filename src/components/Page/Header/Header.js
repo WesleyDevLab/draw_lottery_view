@@ -4,7 +4,6 @@
  * @date    2017-01-06 23:58:20
  * @version $Id$
  */
-import { IndexLink, Link } from 'react-router'
 
 import React, { Component } from 'react';
 

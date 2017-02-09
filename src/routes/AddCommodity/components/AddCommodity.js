@@ -383,15 +383,15 @@ export class _form extends Component {
             </Button>
           </Upload>)}
         </FormItem>
-        <FormItem label={'商品图文'} labelCol={{span:6}} wrapperCol={{span:18}} hasFeedback>
+        <FormItem label={'商品图文'} labelCol={{span: 6}} wrapperCol={{span: 18}} hasFeedback>
           {getFieldDecorator('content', {
             rules: [{
               required: true,
               message: '请输入图文详情'
             }],
-            valuePropName:'content',
-            initialValue:'<p>请输入商品详情</p>',
-          })(<RichText  id="editor1"/>)}
+            valuePropName: 'content',
+            initialValue: '<p>请输入商品详情</p>',
+          })(<RichText id="editor1"/>)}
         </FormItem>
         <FormItem  {...tailFormItemLayout}>
           {getFieldDecorator('easyWinning', {
