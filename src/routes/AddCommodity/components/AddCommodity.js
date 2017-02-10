@@ -390,9 +390,14 @@ export class _form extends Component {
               message: '请输入图文详情'
             }],
             valuePropName: 'content',
-            initialValue: '<p>请输入商品详情</p>',
+            initialValue: '<p><br></p>',
           })(<RichText id="editor1"/>)}
         </FormItem>
+        <div><Button type="primary" onClick={this.init.bind(this)}>初始化</Button><span className="ant-divider"/>
+          <Button type="primary" onClick={(e)=>{
+            const {getFieldValue} = this.props.form;
+            console.warn(getFieldValue('content'))
+          }}>输出值</Button></div>
         <FormItem  {...tailFormItemLayout}>
           {getFieldDecorator('easyWinning', {
             valuePropName: 'checked',

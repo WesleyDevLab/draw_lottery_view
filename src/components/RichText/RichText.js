@@ -19,60 +19,54 @@ export default React.createClass({
     height: '400px'
   },
   getInitialState:function(){
-    return {content:this.props.content};
+    return {editor:null};
   },
   componentWillReceiveProps:function(nextProps){
-    this.setState({
-      content: nextProps.value
-    })
+
   },
   render: function () {
     return (
-      <div>
-        <div id={this.props.id} style={this.style} contentEditable="true"></div>
-      </div>
+      <div id={this.props.id} style={this.style} contentEditable="true"></div>
     );
   },
   componentDidMount: function () {
-    var id = this.props.id;
-    this.editor = new window.wangEditor(id);
-    this.editor.config.uploadImgUrl = uploadUrl;
-    this.editor.config.uploadImgFileName = 'file';
-
-    var _this = this;
-    this.editor.onchange = function () {
-      _this.props.onChange(_this.editor.$txt.html());
+    const id = this.props.id;
+    var editor = new window.wangEditor(id);
+    this.setState({editor:editor})
+    editor.config.uploadImgUrl = uploadUrl;
+    editor.config.uploadImgFileName = 'file';
+    editor.config.printLog = false;
+    const _this = this
+    editor.onchange = function () {
+      _this.props.onChange(editor.$txt.html());
     }
-    this.editor.config.uploadImgFns.onload = function (resultText, xhr){
-      // 上传图片时，已经将图片的名字存在 editor.uploadImgOriginalName
-      var originalName = _this.editor.uploadImgOriginalName || '';
+    editor.config.uploadImgFns.onload = function (resultText, xhr){
+      let data;
+// 上传图片时，已经将图片的名字存在 editor.uploadImgOriginalName
+      const originalName = editor.uploadImgOriginalName || '';
       if(xhr.status == 200){
-        var data = JSON.parse(resultText);
-        _this.editor.command(null, 'insertHtml', '<img src="' + data.data + '" alt="' + originalName + '" style="max-width:100%;"/>');
+        data = JSON.parse(resultText);
+        editor.command(null, 'insertHtml', '<img src="' + data.data + '" alt="' + originalName + '" style="max-width:100%;"/>');
       }else if(xhr.status == 500){
-        var data = JSON.parse(resultText);
+        data = JSON.parse(resultText);
         message.error(data.message);
       }
     }
     // 仅仅想移除某几个菜单，例如想移除『插入代码』和『全屏』菜单：
     // 其中的 wangEditor.config.menus 可获取默认情况下的菜单配置
-    this.editor.config.menus = wangEditor.config.menus.map(function (item, key) {
+    editor.config.menus = wangEditor.config.menus.map(function (item, key) {
       if (item === 'location') {
         return null;
       }
       return item;
     });
-    this.editor.create();
-
-    // 初始化内容
-    this.editor.$txt.html(this.state.content);
+    editor.create();
   },
   componentWillUnmount: function () {
-    this.editor.destroy();
+    this.state.editor.destroy();
   },
   // 获取内容
   getContent: function () {
-    var content = this.editor.$txt.html();
-    return content;
+    return this.state.editor.$txt.html();
   }
 });
